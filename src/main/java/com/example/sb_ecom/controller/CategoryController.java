@@ -1,5 +1,6 @@
 package com.example.sb_ecom.controller;
 
+import com.example.sb_ecom.config.AppConstants;
 import com.example.sb_ecom.model.Category;
 import com.example.sb_ecom.payload.CategoryDTO;
 import com.example.sb_ecom.payload.CategoryResponse;
@@ -23,14 +24,22 @@ public class CategoryController {
     @Autowired
     private CategoryService categoryService;
 
-    public ResponseEntity<String> echoMessage(String message){
+    @GetMapping("/echo")
+    public ResponseEntity<String> echoMessage(@RequestParam(name ="message", required = false) String message)
+    //public ResponseEntity<String> echoMessage(@RequestParam(name ="message", defaultValue = "Hello world") String message)
+    {
         return new ResponseEntity<>("Echoed message " + message, HttpStatus.OK);
     }
 
   //  @GetMapping("/api/public/categories")
     @RequestMapping(value = "/public/categories", method = RequestMethod.GET)
-    public ResponseEntity<CategoryResponse>getAllCategories() {
-        CategoryResponse categoryResponse = categoryService.getAllCategories();
+    public ResponseEntity<CategoryResponse>getAllCategories(
+            @RequestParam (name ="pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
+            @RequestParam (name ="pageSize",  defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
+            @RequestParam (name ="sortBy",    defaultValue = AppConstants.SORT_CATEGORIES_BY, required = false) String sortBy,
+            @RequestParam (name ="sortOrder", defaultValue = AppConstants.SORT_DIR, required = false) String sortOrder)
+    {
+        CategoryResponse categoryResponse = categoryService.getAllCategories(pageNumber, pageSize, sortBy, sortOrder);
         return new ResponseEntity<>(categoryResponse, HttpStatus.OK);
     }
 
